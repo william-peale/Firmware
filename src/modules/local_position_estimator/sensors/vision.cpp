@@ -54,9 +54,9 @@ void BlockLocalPositionEstimator::visionInit()
 int BlockLocalPositionEstimator::visionMeasure(Vector<float, n_y_vision> &y)
 {
 	y.setZero();
-	y(Y_vision_x) = _sub_vision_pos.get().x;
-	y(Y_vision_y) = _sub_vision_pos.get().y;
-	y(Y_vision_z) = _sub_vision_pos.get().z;
+	y(Y_vision_vx) = _sub_vision_pos.get().vx;
+	y(Y_vision_vy) = _sub_vision_pos.get().vy;
+	y(Y_vision_vz) = _sub_vision_pos.get().vz;
 	_visionStats.update(y);
 	_time_last_vision_p = _sub_vision_pos.get().timestamp;
 	return OK;
@@ -72,9 +72,9 @@ void BlockLocalPositionEstimator::visionCorrect()
 	// vision measurement matrix, measures position
 	Matrix<float, n_y_vision, n_x> C;
 	C.setZero();
-	C(Y_vision_x, X_x) = 1;
-	C(Y_vision_y, X_y) = 1;
-	C(Y_vision_z, X_z) = 1;
+	C(Y_vision_vx, X_vx) = 1;
+	C(Y_vision_vy, X_vy) = 1;
+	C(Y_vision_vz, X_vz) = 1;
 
 	// noise matrix
 	Matrix<float, n_y_vision, n_y_vision> R;
@@ -82,19 +82,19 @@ void BlockLocalPositionEstimator::visionCorrect()
 
 	// use error estimates from vision topic if available
 	if (_sub_vision_pos.get().eph > _vision_xy_stddev.get()) {
-		R(Y_vision_x, Y_vision_x) = _sub_vision_pos.get().eph * _sub_vision_pos.get().eph;
-		R(Y_vision_y, Y_vision_y) = _sub_vision_pos.get().eph * _sub_vision_pos.get().eph;
+		R(Y_vision_vx, Y_vision_vx) = _sub_vision_pos.get().eph * _sub_vision_pos.get().eph;
+		R(Y_vision_vy, Y_vision_vy) = _sub_vision_pos.get().eph * _sub_vision_pos.get().eph;
 
 	} else {
-		R(Y_vision_x, Y_vision_x) = _vision_xy_stddev.get() * _vision_xy_stddev.get();
-		R(Y_vision_y, Y_vision_y) = _vision_xy_stddev.get() * _vision_xy_stddev.get();
+		R(Y_vision_vx, Y_vision_vx) = _vision_xy_stddev.get() * _vision_xy_stddev.get();
+		R(Y_vision_vy, Y_vision_vy) = _vision_xy_stddev.get() * _vision_xy_stddev.get();
 	}
 
 	if (_sub_vision_pos.get().epv > _vision_z_stddev.get()) {
-		R(Y_vision_z, Y_vision_z) = _sub_vision_pos.get().epv * _sub_vision_pos.get().epv;
+		R(Y_vision_vz, Y_vision_vz) = _sub_vision_pos.get().epv * _sub_vision_pos.get().epv;
 
 	} else {
-		R(Y_vision_z, Y_vision_z) = _vision_z_stddev.get() * _vision_z_stddev.get();
+		R(Y_vision_vz, Y_vision_vz) = _vision_z_stddev.get() * _vision_z_stddev.get();
 	}
 
 	// vision delayed x
