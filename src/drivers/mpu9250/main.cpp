@@ -259,6 +259,10 @@ start(enum MPU9250_BUS busid, enum Rotation rotation, bool external)
 		}
 
 		started |= start_bus(bus_options[i], rotation, external);
+
+		if (started) {
+			board_spi_reset(50);
+		}
 	}
 
 	exit(started ? 0 : 1);
