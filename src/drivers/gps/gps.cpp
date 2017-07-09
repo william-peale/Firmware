@@ -36,18 +36,15 @@
  * Driver for the GPS on a serial port
  */
 
-#ifdef __PX4_NUTTX
-#include <nuttx/clock.h>
-#include <nuttx/arch.h>
-#endif
-
+#include <px4_config.h>
+#include <px4_time.h>
+#include <px4_tasks.h>
 
 #include <termios.h>
 
 #ifndef __PX4_QURT
 #include <poll.h>
 #endif
-
 
 #include <fcntl.h>
 #include <sys/stat.h>
@@ -62,13 +59,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <unistd.h>
-#include <px4_config.h>
-#include <px4_time.h>
 #include <arch/board/board.h>
 #include <drivers/drv_hrt.h>
 #include <mathlib/mathlib.h>
 #include <systemlib/systemlib.h>
-#include <systemlib/scheduling_priorities.h>
 #include <systemlib/err.h>
 #include <systemlib/param/param.h>
 #include <drivers/drv_gps.h>
