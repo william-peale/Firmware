@@ -912,7 +912,7 @@ PX4FMU::start()
 		/* start the IO interface task */
 		_task = px4_task_spawn_cmd("fmuservo",
 					   SCHED_DEFAULT,
-					   SCHED_PRIORITY_FAST_DRIVER - 1,
+					   SCHED_PRIORITY_ACTUATOR_OUTPUTS,
 					   1310,
 					   (main_t)&PX4FMU::task_main_trampoline,
 					   nullptr);
